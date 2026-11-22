@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>AETHERIA — Planetary Systems Intelligence Platform</title>
+  <style>/*__CSS__*/</style>
+</head>
+<body>
+  <!-- Unified Data-Driven 3D Digital Twin Canvas & Accessible 2D Fallback -->
+  <canvas id="gl-canvas" aria-label="Interactive 3D Digital Twin of Aetheria (click landmarks to inspect)"></canvas>
+  <div id="fallback-2d" aria-label="2D Accessible Community Schematic"></div>
+
+  <!-- Top Navigation Bar -->
+  <header class="topbar" role="banner">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <span class="brand-name">AETHERIA</span>
+      <span class="brand-tag">Planetary Systems Intelligence</span>
+    </div>
+
+    <nav class="nav-steps" aria-label="System Design & Intelligence Navigation">
+      <button class="step-btn" data-view="hub">Workspace</button>
+      <button class="step-btn" data-view="materials">1. Materials</button>
+      <button class="step-btn" data-view="power">2. Power</button>
+      <button class="step-btn" data-view="storage">3. Storage</button>
+      <button class="step-btn" data-view="water">4. Water</button>
+      <button class="step-btn" data-view="future">5. Scenarios</button>
+      <button class="step-btn" data-view="intelligence">Intelligence</button>
+      <button class="step-btn" data-view="lab">Lab</button>
+    </nav>
+
+    <div class="top-actions">
+      <button id="btn-demo" class="btn warm" title="Run 2-minute live school demonstration">2-Min Demo</button>
+      <button id="btn-2d" class="btn" title="Cycle graphics quality: 3D High / 3D Balanced / 2D Accessible">3D High</button>
+      <button id="btn-audio" class="btn" title="Toggle subtle ambient audio (muted by default)">Muted</button>
+    </div>
+  </header>
+
+  <!-- Live 2-Minute Judge Demonstration Guide Banner -->
+  <div id="demo-banner" class="demo-banner" role="region" aria-live="polite">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:4px;">
+      <span id="demo-step-lbl" class="badge model">DEMO 1/5</span>
+      <div style="display:flex;gap:6px;">
+        <button id="demo-next" class="btn primary" style="padding:4px 9px;font-size:11px;">Next Step &rarr;</button>
+        <button id="demo-close" class="btn" style="padding:4px 8px;font-size:11px;">Exit</button>
+      </div>
+    </div>
+    <div id="demo-title" style="font-weight:800;font-size:13.5px;color:#fff;margin-bottom:3px;"></div>
+    <div id="demo-text" style="font-size:12px;color:#cbd5e1;line-height:1.45;"></div>
+  </div>
+
+  <!-- Interactive 3D Digital Twin Infrastructure Inspector Popover -->
+  <aside id="twin-inspector" class="twin-inspector hidden" aria-label="Selected Infrastructure Telemetry">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px;">
+      <div>
+        <div class="panel-eyebrow" style="font-size:9.5px;">DIGITAL TWIN INSPECTOR</div>
+        <div id="twin-title" style="font-weight:800;font-size:13.5px;color:#fff;">Infrastructure</div>
+      </div>
+      <button id="twin-close" class="btn" style="padding:2px 7px;font-size:11px;" aria-label="Close inspector">×</button>
+    </div>
+    <div id="twin-body" style="font-size:11.5px;color:#cbd5e1;line-height:1.5;"></div>
+    <div style="margin-top:8px;display:flex;justify-content:flex-end;">
+      <button id="twin-goto" class="btn primary" style="padding:4px 10px;font-size:11px;">Configure System &rarr;</button>
+    </div>
+  </aside>
+
+  <!-- Quick 3D Landmark Inspection Chips + Live 24-Hour Sun/Moon Cycle Scrubber -->
+  <div id="twin-controls" class="twin-controls">
+    <div class="landmark-bar" aria-label="Inspect 3D Community Infrastructure">
+      <span style="font-size:10px;color:#94a3b8;font-weight:700;letter-spacing:0.06em;">INSPECT:</span>
+      <button class="lm-pill" data-lm="school">School</button>
+      <button class="lm-pill" data-lm="clinic">Clinic</button>
+      <button class="lm-pill" data-lm="solar">Solar Array</button>
+      <button class="lm-pill" data-lm="battery">Battery</button>
+      <button class="lm-pill" data-lm="water">Water Tower</button>
+    </div>
+    <div id="cycle-bar" class="cycle-bar" aria-label="24-Hour Sun and Night Lighting Controls">
+      <button id="btn-cycle-play" class="btn" style="padding:4px 9px;font-size:11px;" title="Animate 24-hour day-night cycle">Play 24h</button>
+      <input id="cycle-slider" type="range" min="0" max="23.9" step="0.25" value="20.5" aria-label="Time of day in hours">
+      <span id="cycle-time" class="cycle-time">20:30 • Night</span>
+    </div>
+  </div>
+
+  <!-- Live System Telemetry KPIs (Always Synchronized with ScienceModel) -->
+  <section class="kpi-strip" aria-label="Live System Summary Metrics">
+    <div class="kpi-box">
+      <div class="kpi-lbl">Electricity Demand</div>
+      <div id="kpi-demand" class="kpi-val">—</div>
+      <div id="kpi-demand-sub" class="kpi-sub">kWh / day</div>
+    </div>
+    <div class="kpi-box">
+      <div class="kpi-lbl">Solar Served</div>
+      <div id="kpi-solar" class="kpi-val">—</div>
+      <div id="kpi-solar-sub" class="kpi-sub">PV generation</div>
+    </div>
+    <div class="kpi-box">
+      <div class="kpi-lbl">Night Backup</div>
+      <div id="kpi-night" class="kpi-val">—</div>
+      <div id="kpi-night-sub" class="kpi-sub">Storage reliability</div>
+    </div>
+    <div class="kpi-box">
+      <div class="kpi-lbl">Water Balance</div>
+      <div id="kpi-water" class="kpi-val">—</div>
+      <div id="kpi-water-sub" class="kpi-sub">Supply vs demand</div>
+    </div>
+  </section>
+
+  <!-- Main Interactive Workspace Panel -->
+  <main class="workspace-panel" aria-label="Aetheria Interactive Planner, Intelligence, and Missions">
+    <div class="panel-head">
+      <div>
+        <div id="panel-eyebrow" class="panel-eyebrow">AETHERIA 2045</div>
+        <h1 id="panel-title" class="panel-title">Workspace Hub</h1>
+      </div>
+      <div style="display:flex;gap:5px;flex-wrap:wrap;">
+        <button id="btn-undo" class="btn" title="Undo last parameter edit" disabled>Undo</button>
+        <button id="btn-mode-toggle" class="btn" title="Switch between Story Mode and Practical Planner">My Plan</button>
+        <button id="btn-export-top" class="btn primary" title="Export Printable Preliminary Engineering Report">Report</button>
+      </div>
+    </div>
+    <div id="panel-body" class="panel-body"></div>
+  </main>
+
+  <!-- First-10-Second Welcome Overlay -->
+  <div id="welcome-overlay" class="overlay" role="dialog" aria-modal="true" aria-labelledby="welcome-heading">
+    <div class="hero-card">
+      <span class="badge fact">INTERACTIVE PLANETARY SYSTEMS INTELLIGENCE PLATFORM</span>
+      <h1 id="welcome-heading" class="hero-title">AETHERIA — The Future We Build</h1>
+      <p class="hero-tag">Explore. Simulate. Solve. Turn science into solutions.</p>
+      <p class="hero-lead">
+        A unified scientific computing and decision-support environment for <strong>solar power, battery storage, materials, and water-energy infrastructure</strong>.
+        Inspect the live 3D community digital twin, run deterministic 24h &amp; 72h simulations, compare 4 architectural scenarios, analyze parameter sensitivity, and export a preliminary engineering report.
+      </p>
+      <div class="card" style="margin-bottom:14px;">
+        <p><strong>Integrated Intelligence:</strong> Deterministic physics diagnostics, input validation, and tradeoff reasoning work 100% locally and offline—no paid API key required.</p>
+        <p><strong>Scientific Honesty:</strong> Simplified digital-twin-style models with transparent equations, editable assumptions, and explicit engineering limitations.</p>
+      </div>
+      <div class="hero-actions">
+        <button id="btn-start-story" class="btn primary">Start Story (2045)</button>
+        <button id="btn-start-planner" class="btn">Open Decision Workspace</button>
+        <button id="btn-start-demo" class="btn warm">2-Min Judge Demo</button>
+      </div>
+      <p id="resume-hint" style="font-size:11.5px;color:#94a3b8;margin-top:12px;"></p>
+    </div>
+  </div>
+
+  <!-- Skippable Prologue Modal -->
+  <div id="prologue-overlay" class="overlay hidden" role="dialog" aria-modal="true" aria-labelledby="prologue-heading">
+    <div class="hero-card">
+      <span class="badge model">PROLOGUE: THE LAST LIGHT • YEAR 2045</span>
+      <h2 id="prologue-heading" class="hero-title" style="font-size:28px;">A World Worth Rebuilding</h2>
+      <blockquote style="margin:12px 0;padding:12px 16px;border-left:3px solid #38bdf8;background:rgba(56,189,248,0.08);border-radius:0 10px 10px 0;font-size:14px;line-height:1.65;color:#e2e8f0;">
+        “Tomorrow was never lost in a single disaster. It was lost in a thousand decisions.<br>
+        How we generated power. How we stored it. What materials we used. How we protected our water.<br>
+        Now, the future of Aetheria depends on what we choose to build.”
+      </blockquote>
+      <p class="hero-lead">
+        Collaborate with <strong>Maya Chen</strong> (Microgrid Engineer), <strong>Prof. David Okafor</strong> (School Principal), <strong>Dr. Priya Nair</strong> (Water Specialist), and <strong>Elena Alvarez</strong> (Residents’ Council). Every decision runs the same underlying physics engine as the practical workspace.
+      </p>
+      <div class="hero-actions">
+        <button id="btn-begin-m1" class="btn primary">Begin Mission 1: Building Blocks &rarr;</button>
+        <button id="btn-skip-prologue" class="btn">Skip to Workspace Hub</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Printable Report Modal & Print Container -->
+  <div id="report-overlay" class="overlay hidden" role="dialog" aria-modal="true" aria-labelledby="report-heading">
+    <div class="hero-card" style="width:min(860px,100%);">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px;">
+        <h2 id="report-heading" style="margin:0;font-size:18px;">Preliminary Infrastructure Analysis Report</h2>
+        <div style="display:flex;gap:6px;">
+          <button id="btn-print-pdf" class="btn primary">Print / Save PDF</button>
+          <button id="btn-dl-json" class="btn">Download JSON</button>
+          <button id="btn-close-report" class="btn">Close</button>
+        </div>
+      </div>
+      <div id="report-preview" style="font-size:12.5px;line-height:1.55;color:#cbd5e1;"></div>
+    </div>
+  </div>
+  <div id="print-report" aria-hidden="true"></div>
+
+  <input id="import-json-input" type="file" accept="application/json,.json" style="display:none;">
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script>/*__JS__*/</script>
+</body>
+</html>

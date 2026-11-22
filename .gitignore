@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+.DS_Store
+tests/screenshots/
+artifacts/
+CHECKPOINT.md
+QUEUE_STATE.json
+SCOREBOARD.md
+UPGRADE_AUDIT.md
+*.zip
